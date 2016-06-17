@@ -22,9 +22,8 @@ module.exports = {
         }
       }
     } else {
-      // get branchName, store into file
+      // get branchName
       branchName = execSync('git rev-parse --abbrev-ref HEAD').toString();
-      fs.writeFileSync(branchFileName, branchName);
     }
 
     return branchName;
