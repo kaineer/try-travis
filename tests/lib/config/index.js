@@ -9,6 +9,9 @@ module.exports = {
     // Directory to store screenshots
     screenshots: "tests/screenshots",
 
+    // Filename to store results
+    results: "tests/results.json",
+
     // Page extents
     page: {
       width: 1024,
@@ -16,6 +19,10 @@ module.exports = {
     },
 
     // Turn on if you need some debugging from phantomjs
-    debug: false
+    debug: false,
+
+    messages: {
+      'module1-task2': require('./messages/module1-task2')
+    }
   }
 };

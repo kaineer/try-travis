@@ -1,15 +1,15 @@
 // phantomjs/utils/context.js
 // BE WARNED: this runs under phantomjs. This means another environment.
 
-var debug = false;
+var config = require('../../config').phantomjs;
+
+var debug = config.debug;
 
 var log = function(message) {
   if(debug) {
     console.log(message);
   }
 };
-
-var config = require('../../config').phantomjs;
 
 var defaultStepOpts = config.defaultStepOpts;
 
@@ -51,7 +51,7 @@ cp.run = function(callback) {
       ctx.runSteps();
     }
 
-    callback();
+    callback(ctx.data);
   });
 };
 
@@ -64,7 +64,7 @@ cp.runSteps = function() {
 
     html = step.html;
     page = step.page;
-    opts = step.opts || {render: true};
+    opts = step.opts || defaultStepOpts;
 
     if(html) {
       this.mergeResult(this.page.evaluate(html));
@@ -75,7 +75,7 @@ cp.runSteps = function() {
     }
 
     if(opts.render) {
-      this.page.render(this.screenshotPath(i + 1);
+      this.page.render(this.screenshotPath(i + 1));
     }
   }
 };
@@ -100,4 +100,8 @@ cp.screenshotPath = function(n) {
   }
 
   return this.screenshots + stepName;
+};
+
+Context.create = function(url, screenshots) {
+  return new Conext(url, screenshots);
 };
