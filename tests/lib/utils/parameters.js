@@ -26,6 +26,6 @@ module.exports = {
       branchName = execSync('git rev-parse --abbrev-ref HEAD').toString();
     }
 
-    return branchName;
+    return branchName.trim();
   }
 };

@@ -7,7 +7,7 @@ var fs = require('fs');
 var parameters = require('./utils/parameters');
 var branchName = parameters.getBranchName();
 var config = require('./config');
-var branchConfig = config[branchName];
+var branchConfig = config.phantomjs.tasks[branchName];
 
 var logger = require('./utils/logger');
 
@@ -33,12 +33,13 @@ var startDevServer = function() {
 
       // logger.debug('DevServer: ' + text);
       if(npmStartStopLine && text.indexOf(npmStartStopLine) > -1) {
+        logger.error('Could not start dev server');
         process.kill(-npmStart.pid);
         reject({
-          message: 'Could not start devServer'
+          message: 'Could not start dev server'
         });
       } else if(npmStartStartLine && text.indexOf(npmStartStartLine) > -1) {
-        // logger.info('Let\'s start phantomjs!');
+        logger.info('Let\'s start phantomjs!');
         resolve();
       }
     });
@@ -47,6 +48,8 @@ var startDevServer = function() {
       reject(err);
     });
   };
+
+  logger.info('Start dev server');
 
   return new Promise(runNpm);
 };
@@ -57,16 +60,30 @@ var runPhantomJs = function() {
       path.join(__dirname, 'phantomjs', branchName + '.js')
     ]);
 
+    phantomJs.stdout.on('data', function(data) {
+      var text = data.toString();
+      logger.debug(text);
+    });
+
+    phantomJs.stderr.on('data', function(data) {
+      var text = data.toString();
+      logger.warn(text);
+    });
+
     phantomJs.on('exit', function(code) {
       process.kill(-npmStart.pid);
 
       if(code > 0) {
+        logger.error('PhantomJs could not work properly');
         reject();    // TODO
       } else {
+        logger.info('PhantomJs work completed');
         resolve();   // TODO ?
       }
     });
   };
+
+  logger.info('Starting phantomjs');
 
   return new Promise(runPJ);
 };
@@ -75,12 +92,16 @@ var prepareJsonResults = function() {
   var resultsPath = config.phantomjs.results;
   var buffer = fs.readFileSync(resultsPath);
   var text = buffer.toString();
-  var results = JSON.parse(text);
+  var data = JSON.parse(text);
 
   var success = false;
 
-  results.forEach(function(result) {
-
+  data.results.forEach(function(result) {
+    if(result.result) {
+      logger.info("[Ok   ] " + result.title);
+    } else {
+      logger.error("[FAIL] " + result.title);
+    }
   });
 
   if(!success) {

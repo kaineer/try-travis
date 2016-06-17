@@ -10,6 +10,9 @@ module.exports = {
     // Default config for phantomjs step
     defaultStepConfig: { render: true },
 
+    //
+    url: 'http://localhost:8080',
+
     // Directory to store screenshots
     screenshots: "tests/screenshots",
 
@@ -23,7 +26,7 @@ module.exports = {
     },
 
     // Turn on if you need some debugging from phantomjs
-    debug: false,
+    debug: true,
 
     tasks: {
       'module1-task2': require('./tasks/module1-task2')

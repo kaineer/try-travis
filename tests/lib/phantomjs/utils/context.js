@@ -1,13 +1,13 @@
 // phantomjs/utils/context.js
 // BE WARNED: this runs under phantomjs. This means another environment.
 
-var config = require('../../config').phantomjs;
+var config = require('../../config/index.js').phantomjs;
 
 var debug = config.debug;
 
 var log = function(message) {
   if(debug) {
-    console.log(message);
+    console.log(message.replace(/\s+$/, ''));
   }
 };
 
@@ -27,6 +27,7 @@ var cp = Context.prototype;
 
 cp.step = function(opts) {
   (this.steps || (this.steps = [])).push(opts);
+  return this;
 };
 
 cp.run = function(callback) {
@@ -49,6 +50,8 @@ cp.run = function(callback) {
   this.page.open(this.url, function(status) {
     if(status === 'success') {
       ctx.runSteps();
+    } else {
+      log('Could not open page');
     }
 
     callback(ctx.data);
@@ -67,14 +70,17 @@ cp.runSteps = function() {
     opts = step.opts || defaultStepOpts;
 
     if(html) {
+      log('Step: ' + (i+1) + ', evaluate in DOM');
       this.mergeResult(this.page.evaluate(html));
     }
 
     if(page) {
+      log('Step: ' + (i+1) + ', work from phantom api');
       page(this.page, this.data);
     }
 
     if(opts.render) {
+      log('Step: ' + (i+1) + ', render page');
       this.page.render(this.screenshotPath(i + 1));
     }
   }
@@ -103,5 +109,7 @@ cp.screenshotPath = function(n) {
 };
 
 Context.create = function(url, screenshots) {
-  return new Conext(url, screenshots);
+  return new Context(url, screenshots);
 };
+
+module.exports = Context;
