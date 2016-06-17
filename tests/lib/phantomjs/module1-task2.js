@@ -58,8 +58,6 @@ context.step({
       }
     }
 
-    console.log(results.length);
-
     return {
       results: results
     };
@@ -68,9 +66,6 @@ context.step({
     render: false
   }
 }).run(function(data) {
-  console.log(data); // => undefined
   fs.write(config.results, JSON.stringify(data), 'w');
   phantom.exit();
 });
-
-// phantom.exit();

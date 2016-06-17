@@ -94,12 +94,15 @@ var prepareJsonResults = function() {
   var text = buffer.toString();
   var data = JSON.parse(text);
 
-  var success = false;
+  var success = true;
+
+  logger.info('----------- Test results --------------');
 
   data.results.forEach(function(result) {
     if(result.result) {
       logger.info("[Ok   ] " + result.title);
     } else {
+      success = false;
       logger.error("[FAIL] " + result.title);
     }
   });
@@ -113,9 +116,12 @@ var prepareResults = function() {
   if(branchConfig.useScreenshots) {
     // prepareScreenshotResults();
   }
+
   if(branchConfig.useResults) {
     prepareJsonResults();
   }
+
+  process.exit(0);
 };
 
 

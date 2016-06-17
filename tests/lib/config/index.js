@@ -26,7 +26,7 @@ module.exports = {
     },
 
     // Turn on if you need some debugging from phantomjs
-    debug: true,
+    debug: false,
 
     tasks: {
       'module1-task2': require('./tasks/module1-task2')
