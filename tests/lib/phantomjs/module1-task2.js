@@ -38,10 +38,15 @@ context.step({
       return getMessage(false) === 'Я никуда не попал';
     };
 
+    var fnANumber = function(getMessage) {
+      return getMessage(5) === 'Я прыгнул на 500 сантиметров';
+    };
+
     var tests = [
       { label: 'Функция должна быть определена', test: fnExists, block: true },
       { label: 'Если a === true',         test: fnATrue },
-      { label: 'Если a === false',        test: fnAFalse }
+      { label: 'Если a === false',        test: fnAFalse },
+      { label: 'Если a - число',          test: fnANumber }
     ];
 
     for(var i = 0; i < tests.length; ++i) {
