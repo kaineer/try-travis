@@ -2,7 +2,8 @@
 //
 var branchName = 'module1-task2';
 var config = require("../config").phantomjs;
-var messages = config.messages[branchName];
+var taskConfig = config.tasks[branchName];
+var messages = taskConfig.messages;
 
 var context = require('./utils/context').create();
 

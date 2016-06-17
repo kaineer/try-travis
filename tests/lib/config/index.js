@@ -2,6 +2,10 @@
 module.exports = {
   branchFileName: './branch-name',
 
+  npmStart: require('./npm-start'),
+
+  log_level: 'DEBUG',
+
   phantomjs: {
     // Default config for phantomjs step
     defaultStepConfig: { render: true },
@@ -21,8 +25,8 @@ module.exports = {
     // Turn on if you need some debugging from phantomjs
     debug: false,
 
-    messages: {
-      'module1-task2': require('./messages/module1-task2')
+    tasks: {
+      'module1-task2': require('./tasks/module1-task2')
     }
   }
 };
