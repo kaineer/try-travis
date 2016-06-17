@@ -4,7 +4,8 @@
   "description": "Trying travis to use with ha",
   "main": "index.js",
   "scripts": {
-    "test": "node ./lib/index.js"
+    "test": "node ./lib/index.js",
+    "bump": "git rev-parse --abbrev-ref HEAD >branch-name"
   },
   "repository": {
     "type": "git",
