@@ -6,4 +6,8 @@ function getMessage(a, b) {
       return 'Я никуда не попал';
     }
   }
+
+  if(typeof(a) === 'number') {
+    return 'Я прыгнул на ' + (a * 100) + ' сантиметров';
+  }
 }
