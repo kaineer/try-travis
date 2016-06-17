@@ -1,0 +1,19 @@
+{
+  "name": "try-travis",
+  "version": "1.0.0",
+  "description": "Trying travis to use with ha",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaineer/try-travis.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaineer/try-travis/issues"
+  },
+  "homepage": "https://github.com/kaineer/try-travis#readme"
+}
