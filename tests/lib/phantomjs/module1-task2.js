@@ -42,11 +42,21 @@ context.step({
       return getMessage(5) === 'Я прыгнул на 500 сантиметров';
     };
 
+    var fnAArray = function(getMessage) {
+      return getMessage([1, 2, 3, 4]) === 'Я прошёл 10 шагов';
+    };
+
+    var fnABArrays = function(getMessage) {
+      return getMessage([1, 2, 3, 4], [2, 2, 2, 2]) === 'Я прошёл 20 метров';
+    };
+
     var tests = [
       { label: 'Функция должна быть определена', test: fnExists, block: true },
       { label: 'Если a === true',         test: fnATrue },
       { label: 'Если a === false',        test: fnAFalse },
-      { label: 'Если a - число',          test: fnANumber }
+      { label: 'Если a - число',          test: fnANumber },
+      { label: 'Если a - массив',         test: fnAArray },
+      { label: 'Если a и b - массивы',    test: fnABArrays }
     ];
 
     for(var i = 0; i < tests.length; ++i) {
