@@ -1,24 +1,26 @@
 {
-  "name": "try-travis",
-  "version": "1.0.0",
-  "description": "Trying travis to use with ha",
-  "main": "index.js",
-  "scripts": {
-    "test": "node ./lib/index.js",
-    "bump": "git rev-parse --abbrev-ref HEAD >branch-name"
-  },
+  "name": "999999--code-and-magick",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Личный проект «Code and magick» от HTML Academy",
+  "author": "Неопознанный енот",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaineer/try-travis.git"
   },
-  "author": "",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kaineer/try-travis/issues"
   },
   "homepage": "https://github.com/kaineer/try-travis#readme",
   "devDependencies": {
+    "eslint": "2.4.0",
     "imagemagick": "^0.1.3",
     "phantomjs-prebuilt": "^2.1.7"
+  },
+  "scripts": {
+    "test": "node tests/lib/index.js"
+  },
+  "engines": {
+    "node": "^5.0.0"
   }
 }
