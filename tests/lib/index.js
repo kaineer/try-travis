@@ -63,6 +63,11 @@ var runPhantomJs = function() {
     phantomJs.stdout.on('data', function(data) {
       var text = data.toString();
       logger.debug(text);
+
+      if(text.indexOf('in __webpack_require__') > -1) {
+        process.kill(-npmStart.pid);
+        phantomJs.kill();
+      }
     });
 
     phantomJs.stderr.on('data', function(data) {
@@ -114,7 +119,7 @@ var prepareJsonResults = function() {
 
 var prepareResults = function() {
   if(branchConfig.useScreenshots) {
-    // prepareScreenshotResults();
+    prepareScreenshotResults();
   }
 
   if(branchConfig.useResults) {

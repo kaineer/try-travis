@@ -8,16 +8,19 @@ module.exports = {
 
   phantomjs: {
     // Default config for phantomjs step
-    defaultStepConfig: { render: true },
+    defaultStepOpts: { render: true },
 
     //
     url: 'http://localhost:8080',
 
     // Directory to store screenshots
-    screenshots: "tests/screenshots",
+    screenshots: "tests/screenshots/current/",
 
     // Filename to store results
     results: "tests/results.json",
+
+    //
+    shims: "tests/lib/phantomjs/utils/shims.js",
 
     // Page extents
     page: {
@@ -26,10 +29,11 @@ module.exports = {
     },
 
     // Turn on if you need some debugging from phantomjs
-    debug: false,
+    debug: true,
 
     tasks: {
-      'module1-task2': require('./tasks/module1-task2')
+      'module1-task2': require('./tasks/module1-task2'),
+      'module3-task2': require('./tasks/module3-task2')
     }
   }
 };

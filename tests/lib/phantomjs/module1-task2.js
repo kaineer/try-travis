@@ -11,7 +11,6 @@ var log = function(message) {
 };
 
 var branchName = 'module1-task2';
-var config = require("../config").phantomjs;
 var taskConfig = config.tasks[branchName];
 var messages = taskConfig.messages;
 

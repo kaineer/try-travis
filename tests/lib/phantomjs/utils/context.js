@@ -2,6 +2,7 @@
 // BE WARNED: this runs under phantomjs. This means another environment.
 
 var config = require('../../config/index.js').phantomjs;
+var fs = require('fs');
 
 var debug = config.debug;
 
@@ -34,20 +35,28 @@ cp.run = function(callback) {
   log('Context#run');
 
   var ctx = this;
-  this.page = require('webpage').create();
+  var page = this.page = require('webpage').create();
 
-  this.page.viewportSize = {
+  page.viewportSize = {
     width: config.page.width,
     height: config.page.height,
   };
 
-  this.page.onConsoleMessage = function(msg, lineNum, sourceId) {
-    console.log('PhantomJS: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
+  page.onConsoleMessage = function(msg, lineNum, sourceId) {
+    log('PhantomJS: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
+  };
+
+  page.onInitialized = function() {
+    if(page.injectJs(config.shims) ) {
+      log('PhantomJS: loaded shims');
+    } else {
+      log('PhantomJS: could not load shims.js');
+    }
   };
 
   log("Before open");
 
-  this.page.open(this.url, function(status) {
+  page.open(this.url, function(status) {
     if(status === 'success') {
       ctx.runSteps();
     } else {
@@ -72,12 +81,16 @@ cp.runSteps = function() {
     if(html) {
       log('Step: ' + (i+1) + ', evaluate in DOM');
       this.mergeResult(this.page.evaluate(html));
+      log('Step: ' + (i+1) + ', evaluate in DOM, done');
     }
 
     if(page) {
       log('Step: ' + (i+1) + ', work from phantom api');
       page(this.page, this.data);
+      log('Step: ' + (i+1) + ', work from phantom api, done');
     }
+
+    log(typeof(opts));
 
     if(opts.render) {
       log('Step: ' + (i+1) + ', render page');
