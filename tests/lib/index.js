@@ -148,7 +148,7 @@ var prepareScreenshotResults = function() {
     path.join(config.screenshots, branchName, 'step-*.png')
   );
 
-  steps.map(function(step) {
+  steps.forEach(function(step) {
     var stepBase = path.basename(step);
     var targetStep = path.join(config.screenshots, 'current', stepBase);
 
