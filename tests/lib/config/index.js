@@ -6,7 +6,11 @@ module.exports = {
 
   screenshots: 'tests/screenshots/',
 
-  log_level: 'DEBUG',
+  report: 'tests/index.html',
+
+  treshold: 99.99,
+
+  log_level: 'INFO',
 
   phantomjs: {
     // Default config for phantomjs step
