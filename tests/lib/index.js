@@ -148,7 +148,7 @@ var buildScreenshotReport = function(result) {
 
   var content = builder.run(result);
 
-  logger.info('Writing test/index.html..');
+  logger.info('Writing tests/index.html..');
   fs.writeFileSync(config.report, content);
   logger.info('done');
 };
@@ -192,11 +192,12 @@ var prepareScreenshotResults = function() {
     return compareTwoScreenshots(result, step, targetStep);
   });
 
-  if(process.env.TRAVIS === 'true') {
-    displayScreenshotResults(result);
-  } else {
+
+  if(process.env.TRAVIS !== 'true') {
     buildScreenshotReport(result);
   }
+
+  displayScreenshotResults(result);
 };
 
 var prepareResults = function() {
@@ -215,5 +216,3 @@ var prepareResults = function() {
 startDevServer().
   then(runPhantomJs).
   then(prepareResults);
-
-// process.exit(0);
