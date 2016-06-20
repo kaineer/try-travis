@@ -3,6 +3,7 @@
 var spawn = require('child_process').spawn;
 var path = require('path');
 var fs = require('fs');
+var glob = require('glob');
 
 var parameters = require('./utils/parameters');
 var branchName = parameters.getBranchName();
@@ -115,6 +116,64 @@ var prepareJsonResults = function() {
   if(!success) {
     process.exit(1);
   }
+};
+
+var COMPARE_RE = /\d+(\.\d+)?\s+\((\d+(\.\d+)?)\)/;
+
+var compareTwoScreenshots = function(result, etalonStep, targetStep) {
+  var stepBase = path.basename(etalonStep, '.png');
+
+  var runCompare = function(resolve, reject) {
+    var cmp = spawn('compare', [
+      '-metric',
+      'RMSE',
+      etalonStep,
+      targetStep,
+      '/dev/null'
+    ]);
+
+    logger.debug('Compare ' + etalonStep + ' against ' + targetStep);
+
+    cmp.stderr.on('data', function(data) {
+      var text = data.toString();
+      var md = COMPARE_RE.exec(text);
+      var percent;
+
+      if(md) {
+        percent = parseFloat(md[2]);
+        result[stepBase] = 100 - percent;
+        logger.debug(stepBase + ' got ' + result[stepBase] + ' percents');
+        resolve(true);
+      }
+    });
+
+    cmp.on('exit', function() {
+      reject(false); // exit without result resolved
+    });
+  };
+
+  return newPromise(runCompare);
+};
+
+var prepareScreenshotResults = function() {
+  var result = {};
+
+  var steps = glob.sync(
+    path.join(config.screenshots, branchName, 'step-*.png')
+  );
+
+  var comparePromises = steps.map(function(step) {
+    var stepBase = path.basename(step);
+    var targetStep = path.join(config.screenshots, 'current', stepBase);
+
+    return compareTwoScreenshots(result, step, targetStep);
+  });
+
+  return Promise.all(comparePromises).
+    then(
+      function() {
+        console.log(results);
+      });
 };
 
 var prepareResults = function() {
