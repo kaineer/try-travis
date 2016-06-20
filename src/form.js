@@ -1,17 +1,19 @@
 'use strict';
 
-(function() {
-  var formContainer = document.querySelector('.overlay-container');
-  var formOpenButton = document.querySelector('.reviews-controls-new');
-  var formCloseButton = document.querySelector('.review-form-close');
+var game = require('./game');
 
-  formOpenButton.onclick = function(evt) {
-    evt.preventDefault();
-    formContainer.classList.remove('invisible');
-  };
+var formContainer = document.querySelector('.overlay-container');
+var formOpenButton = document.querySelector('.reviews-controls-new');
+var formCloseButton = document.querySelector('.review-form-close');
 
-  formCloseButton.onclick = function(evt) {
-    evt.preventDefault();
-    formContainer.classList.add('invisible');
-  };
-})();
+formOpenButton.onclick = function(evt) {
+  evt.preventDefault();
+  formContainer.classList.remove('invisible');
+  game.enablePauseListener(false);
+};
+
+formCloseButton.onclick = function(evt) {
+  evt.preventDefault();
+  formContainer.classList.add('invisible');
+  game.enablePauseListener(true);
+};
