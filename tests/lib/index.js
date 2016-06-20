@@ -163,6 +163,8 @@ var prepareScreenshotResults = function() {
   );
 
   var comparePromises = steps.map(function(step) {
+    logger.debug('Compare ' + step);
+
     var stepBase = path.basename(step);
     var targetStep = path.join(config.screenshots, 'current', stepBase);
 
