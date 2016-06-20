@@ -25,7 +25,7 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server --watch --config webpack.config.js",
-    "test": "node tests/lib/index.js",
+    "test": "eslint src && node tests/lib/index.js",
     "commit": "commit-wizard"
   },
   "config": {

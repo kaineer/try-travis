@@ -22,13 +22,13 @@ formCloseButton.onclick = function(evt) {
 var initValidation = function() {
   var form = document.querySelector('.review-form');
   var elems = form.elements,
-      marks = elems['review-mark'],
-      name = elems['review-name'],
-      text = elems['review-text'],
-      labels = form.querySelector('.review-fields'),
-      labelName = form.querySelector('.review-fields-name'),
-      labelText = form.querySelector('.review-fields-text'),
-      i;
+    marks = elems['review-mark'],
+    name = elems['review-name'],
+    text = elems['review-text'],
+    labels = form.querySelector('.review-fields'),
+    labelName = form.querySelector('.review-fields-name'),
+    labelText = form.querySelector('.review-fields-text'),
+    i;
 
   name.required = true;
 

@@ -430,18 +430,18 @@ Game.prototype = {
    */
   _drawPauseScreen: function() {
     switch (this.state.currentStatus) {
-    case Verdict.WIN:
-      this._drawMessage('Вы победили! Если хотите начать игру заново - нажмите на пробел!');
-      break;
-    case Verdict.FAIL:
-      this._drawMessage('Вы проиграли! Не расстраивайтесь, нажав на пробел можно начать заново!');
-      break;
-    case Verdict.PAUSE:
-      this._drawMessage('Игра находится на паузе, нажмите пробел, чтобы продолжить.');
-      break;
-    case Verdict.INTRO:
-      this._drawMessage('Добро пожаловать! Скорее нажмите пробел, чтобы начать игру!');
-      break;
+      case Verdict.WIN:
+        this._drawMessage('Вы победили! Если хотите начать игру заново - нажмите на пробел!');
+        break;
+      case Verdict.FAIL:
+        this._drawMessage('Вы проиграли! Не расстраивайтесь, нажав на пробел можно начать заново!');
+        break;
+      case Verdict.PAUSE:
+        this._drawMessage('Игра находится на паузе, нажмите пробел, чтобы продолжить.');
+        break;
+      case Verdict.INTRO:
+        this._drawMessage('Добро пожаловать! Скорее нажмите пробел, чтобы начать игру!');
+        break;
     }
   },
 
@@ -499,10 +499,10 @@ Game.prototype = {
     this._messageSettings.text.lineCount = CONFIG_MESSAGE.text.lineCount;
 
     var getWords = message.split(' '),
-        drawLine = '',
-        textHeight = this._messageSettings.fontStyle.lineHeight,
-        i = 0,
-        messageWidth = this._messageSettings.width - this._messageSettings.fontStyle.offset.X * 2;
+      drawLine = '',
+      textHeight = this._messageSettings.fontStyle.lineHeight,
+      i = 0,
+      messageWidth = this._messageSettings.width - this._messageSettings.fontStyle.offset.X * 2;
 
     this.ctx.font = this._messageSettings.fontStyle.fontSize + ' ' + this._messageSettings.fontStyle.fontFamily;
 
@@ -783,21 +783,21 @@ Game.prototype = {
     this.checkStatus();
 
     switch (this.state.currentStatus) {
-    case Verdict.CONTINUE:
-      this.state.lastUpdated = Date.now();
-      this.render();
-      requestAnimationFrame(function() {
-        this.update();
-      }.bind(this));
-      break;
+      case Verdict.CONTINUE:
+        this.state.lastUpdated = Date.now();
+        this.render();
+        requestAnimationFrame(function() {
+          this.update();
+        }.bind(this));
+        break;
 
-    case Verdict.WIN:
-    case Verdict.FAIL:
-    case Verdict.PAUSE:
-    case Verdict.INTRO:
-    default:
-      this.pauseLevel();
-      break;
+      case Verdict.WIN:
+      case Verdict.FAIL:
+      case Verdict.PAUSE:
+      case Verdict.INTRO:
+      default:
+        this.pauseLevel();
+        break;
     }
   },
 
@@ -807,18 +807,18 @@ Game.prototype = {
    */
   _onKeyDown: function(evt) {
     switch (evt.keyCode) {
-    case 37:
-      this.state.keysPressed.LEFT = true;
-      break;
-    case 39:
-      this.state.keysPressed.RIGHT = true;
-      break;
-    case 38:
-      this.state.keysPressed.UP = true;
-      break;
-    case 27:
-      this.state.keysPressed.ESC = true;
-      break;
+      case 37:
+        this.state.keysPressed.LEFT = true;
+        break;
+      case 39:
+        this.state.keysPressed.RIGHT = true;
+        break;
+      case 38:
+        this.state.keysPressed.UP = true;
+        break;
+      case 27:
+        this.state.keysPressed.ESC = true;
+        break;
     }
 
     if (evt.shiftKey) {
@@ -832,18 +832,18 @@ Game.prototype = {
    */
   _onKeyUp: function(evt) {
     switch (evt.keyCode) {
-    case 37:
-      this.state.keysPressed.LEFT = false;
-      break;
-    case 39:
-      this.state.keysPressed.RIGHT = false;
-      break;
-    case 38:
-      this.state.keysPressed.UP = false;
-      break;
-    case 27:
-      this.state.keysPressed.ESC = false;
-      break;
+      case 37:
+        this.state.keysPressed.LEFT = false;
+        break;
+      case 39:
+        this.state.keysPressed.RIGHT = false;
+        break;
+      case 38:
+        this.state.keysPressed.UP = false;
+        break;
+      case 27:
+        this.state.keysPressed.ESC = false;
+        break;
     }
 
     if (evt.shiftKey) {
