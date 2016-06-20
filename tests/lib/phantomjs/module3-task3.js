@@ -53,9 +53,13 @@ context.step({
     var nameInput = document.getElementById('review-name');
     var textInput = document.getElementById('review-text');
     var submitBtn = document.querySelector('.review-submit');
+    var form = document.querySelector('.review-form');
 
     nameInput.value = 'Кекс';
-    textInput.value = '';
+    textInput.value = 'Привет';
+    mark4.value = 4;
+
+    submitBtn.disabled = false;
 
     return {
       mark4: mark4.getBoundingClientRect(),
@@ -70,14 +74,27 @@ context.step({
 
     br = data.submitBtn;
 
+    page.sendEvent('click', br.left + 1, br.top + 1);
+
     page.clipRect = {
       left: 225, top: 80,
       width: 565, height: 625
     };
 
-    page.sendEvent('click', br.left + 1, br.top + 1);
+    var period = 2000;
+
+    var t0 = Date.now();
+    while(Date.now() - t0 < period) {}
+
+    page.go('http://localhost:8080');
+
+    t0 = Date.now();
+    while(Date.now() - t0 < period) {}
 
     page.reload();
+
+    t0 = Date.now();
+    while(Date.now() - t0 < period) {}
   },
 
   opts: { render: true }
