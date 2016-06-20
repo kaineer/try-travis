@@ -20,7 +20,8 @@
     "phantomjs-prebuilt": "^2.1.7",
     "pre-git": "^3.9.1",
     "webpack": "^1.12.14",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "browser-cookies": "^1.0.8"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
