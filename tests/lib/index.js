@@ -14,6 +14,9 @@ var ReportBuilder = require('./utils/report-builder');
 
 var logger = require('./utils/logger');
 
+var FAIL = '[FAIL] ';
+var OK   = '[Ok  ] ';
+
 // 1. Run `npm start`
 // 2. Run `phantomjs phantomjs/<branchName>.js`
 // 3. Kill `npm start`
@@ -108,10 +111,10 @@ var prepareJsonResults = function() {
 
   data.results.forEach(function(result) {
     if(result.result) {
-      logger.info("[Ok   ] " + result.title);
+      logger.info(OK + result.title);
     } else {
       success = false;
-      logger.error("[FAIL] " + result.title);
+      logger.error(FAIL + result.title);
     }
   });
 
@@ -150,6 +153,29 @@ var buildScreenshotReport = function(result) {
   logger.info('done');
 };
 
+var displayScreenshotResults = function(result) {
+  var messages = branchConfig.messages;
+  var step, percent;
+  var treshold = config.treshold;
+
+  var success = true;
+
+  logger.info('----------- Test results --------------');
+
+  for(var key in messages) {
+    if(result[key] >= treshold) {
+      logger.info(OK + messages[key].title);
+    } else {
+      success = false;
+      logger.error(FAIL + messages[key].title);
+    }
+  }
+
+  if(!success) {
+    process.exit(1);
+  }
+};
+
 var prepareScreenshotResults = function() {
   logger.debug('Running prepareScreenshotResults()');
 
@@ -166,7 +192,11 @@ var prepareScreenshotResults = function() {
     return compareTwoScreenshots(result, step, targetStep);
   });
 
-  buildScreenshotReport(result);
+  if(process.env.TRAVIS === 'true') {
+    displayScreenshotResults(result);
+  } else {
+    buildScreenshotReport(result);
+  }
 };
 
 var prepareResults = function() {

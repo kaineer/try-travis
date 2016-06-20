@@ -43,7 +43,7 @@ var initValidation = function() {
     text.required = descriptionRequired;
     toggleVisibility(labelName, !name.validity.valid);
     toggleVisibility(labelText, !text.validity.valid);
-    toggleVisibility(labels, !formIsValid);
+    // toggleVisibility(labels, !formIsValid);
 
     formSubmitButton.disabled = !formIsValid;
   };
