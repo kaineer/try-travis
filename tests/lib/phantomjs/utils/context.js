@@ -90,8 +90,6 @@ cp.runSteps = function() {
       log('Step: ' + (i+1) + ', work from phantom api, done');
     }
 
-    log(typeof(opts));
-
     if(opts.render) {
       log('Step: ' + (i+1) + ', render page');
       this.page.render(this.screenshotPath(i + 1));

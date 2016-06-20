@@ -1,6 +1,7 @@
 // index.js
 //
 var spawn = require('child_process').spawn;
+var execSync = require('child_process').execSync;
 var path = require('path');
 var fs = require('fs');
 var glob = require('glob');
@@ -123,59 +124,38 @@ var COMPARE_RE = /\d+(\.\d+)?\s+\((\d+(\.\d+)?)\)/;
 var compareTwoScreenshots = function(result, etalonStep, targetStep) {
   var stepBase = path.basename(etalonStep, '.png');
 
-  var runCompare = function(resolve, reject) {
-    var cmp = spawn('compare', [
-      '-metric',
-      'RMSE',
-      etalonStep,
-      targetStep,
-      '/dev/null'
-    ]);
+  var text =
+      execSync(
+        'compare -metric RMSE ' +
+          etalonStep + ' ' + targetStep + ' /dev/null 2>&1').toString();
 
-    logger.debug('Compare ' + etalonStep + ' against ' + targetStep);
+  var md = COMPARE_RE.exec(text);
+  var percent;
 
-    cmp.stderr.on('data', function(data) {
-      var text = data.toString();
-      var md = COMPARE_RE.exec(text);
-      var percent;
-
-      if(md) {
-        percent = parseFloat(md[2]);
-        result[stepBase] = 100 - percent;
-        logger.debug(stepBase + ' got ' + result[stepBase] + ' percents');
-        resolve(true);
-      }
-    });
-
-    cmp.on('exit', function() {
-      reject(false); // exit without result resolved
-    });
-  };
-
-  return newPromise(runCompare);
+  if(md) {
+    percent = parseFloat(md[2]);
+    result[stepBase] = 100 - percent;
+    logger.debug(stepBase + ' got ' + result[stepBase] + ' percents');
+  }
 };
 
 var prepareScreenshotResults = function() {
+  logger.debug('Running prepareScreenshotResults()');
+
   var result = {};
 
   var steps = glob.sync(
     path.join(config.screenshots, branchName, 'step-*.png')
   );
 
-  var comparePromises = steps.map(function(step) {
-    logger.debug('Compare ' + step);
-
+  steps.map(function(step) {
     var stepBase = path.basename(step);
     var targetStep = path.join(config.screenshots, 'current', stepBase);
 
     return compareTwoScreenshots(result, step, targetStep);
   });
 
-  return Promise.all(comparePromises).
-    then(
-      function() {
-        console.log(results);
-      });
+  console.log(result);
 };
 
 var prepareResults = function() {

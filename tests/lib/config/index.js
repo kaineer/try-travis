@@ -4,6 +4,8 @@ module.exports = {
 
   npmStart: require('./npm-start'),
 
+  screenshots: 'tests/screenshots/',
+
   log_level: 'DEBUG',
 
   phantomjs: {
