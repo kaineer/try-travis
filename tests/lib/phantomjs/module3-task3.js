@@ -66,8 +66,6 @@ context.step({
   page: function(page, data) {
     var br = data.mark4;
 
-    page.navigationLocked = true;
-
     page.sendEvent('click', br.left + 1, br.top + 1);
 
     br = data.submitBtn;
@@ -79,11 +77,7 @@ context.step({
 
     page.sendEvent('click', br.left + 1, br.top + 1);
 
-    log('Cookies before: ' + page.cookies)
-
     page.reload();
-
-    log('Cookies after: ' + page.cookies)
   },
 
   opts: { render: true }
