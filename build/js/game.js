@@ -69,6 +69,47 @@
     DOWN: 8
   };
 
+/**
+   * @const
+   * @type {object}
+   */
+  var CONFIG_MESSAGE = {
+    position: {
+      topLeft: {
+        X: 0,
+        Y: 0
+      },
+      topRight: {
+        X: 0,
+        Y: 0
+      },
+      bottomLeft: {
+        X: 0,
+        Y: 0
+      },
+      bottomRight: {
+        X: 0,
+        Y: 0
+      }
+    },
+    width: 280,
+    offsetFromHero: 10,
+    fontStyle: {
+      fontSize: '16px',
+      lineHeight: 24,
+      fontFamily: 'PT Mono, "Courier New", Courier, monospace',
+      color: '#000',
+      offset: {
+        X: 14,
+        Y: 16
+      }
+    },
+    text: {
+      lines: [],
+      lineCount: 1
+    }
+  };
+
   /**
    * Правила перерисовки объектов в зависимости от состояния игры.
    * @type {Object.<ObjectType, function(Object, Object, number): Object>}
@@ -256,6 +297,7 @@
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
     this._pauseListener = this._pauseListener.bind(this);
+    this._messageSettings = Object.assign({}, CONFIG_MESSAGE);
   };
 
   Game.prototype = {
@@ -380,19 +422,154 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._drawMessage('Вы победили! Если хотите начать игру заново - нажмите на пробел!');
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._drawMessage('Вы проиграли! Не расстраивайтесь, нажав на пробел можно начать заново!');
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._drawMessage('Игра находится на паузе, нажмите пробел, чтобы продолжить.');
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._drawMessage('Добро пожаловать! Скорее нажмите пробел, чтобы начать игру!');
           break;
       }
     },
+
+    /**
+     * Обработка сообщения экрана паузы
+     *
+     * @param {Object} message
+     */
+    _drawMessage: function(message) {
+
+      // Установка позиции окна сообщения
+      this._setMessagePosition();
+
+      // Разделение сообщения на строки
+      this._splitText(message);
+
+      // Отрисовка тени сообщения
+      this._drawRect('rgba(0, 0, 0, .7)', 10);
+
+      // Отрисовка фона сообщения
+      this._drawRect('#fff');
+
+      // Отрисовка текста сообщения
+      this._drawText();
+
+    },
+
+		/**
+		 * Установка позиции окна сообщения
+		 */
+    _setMessagePosition: function() {
+      var me = this.state.objects.filter(function(object) {
+        return object.type === ObjectType.ME;
+      })[0];
+
+      this._messageSettings.position.bottomLeft.X = me.x + me.width + this._messageSettings.offsetFromHero;
+      this._messageSettings.position.bottomLeft.Y = me.y - this._messageSettings.offsetFromHero;
+
+      this._messageSettings.position.bottomRight.X = me.x + me.width + this._messageSettings.offsetFromHero + this._messageSettings.width;
+      this._messageSettings.position.bottomRight.Y = me.y - this._messageSettings.offsetFromHero - 10;
+
+      this._messageSettings.position.topLeft.X = this._messageSettings.position.bottomLeft.X + 10;
+
+      this._messageSettings.position.topRight.X = this._messageSettings.position.bottomRight.X + 10;
+    },
+
+    /**
+     * Разделение текста на строки, добавление их в массив
+     *
+     * @param {Object} message
+     */
+    _splitText: function(message) {
+
+      this._messageSettings.text.lines = [];
+      this._messageSettings.text.lineCount = CONFIG_MESSAGE.text.lineCount;
+
+      var getWords = message.split(' '),
+          drawLine = '',
+          textHeight = this._messageSettings.fontStyle.lineHeight,
+          i = 0,
+          messageWidth = this._messageSettings.width - this._messageSettings.fontStyle.offset.X * 2;
+
+      this.ctx.font = this._messageSettings.fontStyle.fontSize + ' ' + this._messageSettings.fontStyle.fontFamily;
+
+      for (i = 0; i < getWords.length; i++) {
+        var tempLine = drawLine + getWords[i] + ' ';
+        var getWordsWidth = this.ctx.measureText(tempLine);
+        var tempWidth = getWordsWidth.width;
+        if (tempWidth > messageWidth) {
+          this._messageSettings.text.lines.push(drawLine);
+          drawLine = getWords[i] + ' ';
+          textHeight += this._messageSettings.fontStyle.lineHeight;
+          this._messageSettings.text.lineCount++;
+        } else {
+          drawLine = tempLine;
+        }
+      }
+
+      this._messageSettings.text.lines.push(drawLine);
+
+      this._messageSettings.position.topLeft.Y = this._messageSettings.position.bottomLeft.Y - textHeight - (this._messageSettings.fontStyle.offset.Y * 2);
+      this._messageSettings.position.topRight.Y = this._messageSettings.position.bottomRight.Y - textHeight - (this._messageSettings.fontStyle.offset.Y * 2);
+
+    },
+
+    /**
+     * Отрисовка фона и тени сообщения в зависимости от высоты текста
+     *
+     * @param {string} color
+     * @param {number=} offset
+     */
+    _drawRect: function(color, offset) {
+
+      this.ctx.fillStyle = color;
+
+      if (offset) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this._messageSettings.position.bottomLeft.X + offset, this._messageSettings.position.bottomLeft.Y + offset);
+        this.ctx.lineTo(this._messageSettings.position.topLeft.X + offset, this._messageSettings.position.topLeft.Y + offset);
+        this.ctx.lineTo(this._messageSettings.position.topRight.X + offset, this._messageSettings.position.topRight.Y + offset);
+        this.ctx.lineTo(this._messageSettings.position.bottomRight.X + offset, this._messageSettings.position.bottomRight.Y + offset);
+        this.ctx.closePath();
+        this.ctx.fill();
+      } else {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this._messageSettings.position.bottomLeft.X, this._messageSettings.position.bottomLeft.Y);
+        this.ctx.lineTo(this._messageSettings.position.topLeft.X, this._messageSettings.position.topLeft.Y);
+        this.ctx.lineTo(this._messageSettings.position.topRight.X, this._messageSettings.position.topRight.Y);
+        this.ctx.lineTo(this._messageSettings.position.bottomRight.X, this._messageSettings.position.bottomRight.Y);
+        this.ctx.closePath();
+        this.ctx.fill();
+      }
+    },
+
+    /**
+     * Построчная отрисовка текста
+     *
+     */
+    _drawText: function() {
+
+      // Вставляем текст сообщения
+
+      this.ctx.fillStyle = this._messageSettings.fontStyle.color;
+      this.ctx.textBaseline = 'hanging';
+
+      var textPosition = {
+        X: this._messageSettings.position.topLeft.X + this._messageSettings.fontStyle.offset.X,
+        Y: this._messageSettings.position.topLeft.Y + this._messageSettings.fontStyle.offset.Y
+      };
+
+      for (var i = 0; i < this._messageSettings.text.lines.length; i++) {
+        this.ctx.fillText(this._messageSettings.text.lines[i], textPosition.X, textPosition.Y);
+        textPosition.Y += this._messageSettings.fontStyle.lineHeight;
+      }
+
+    },
+
 
     /**
      * Предзагрузка необходимых изображений для уровня.
