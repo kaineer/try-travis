@@ -213,6 +213,8 @@ var prepareResults = function() {
 };
 
 
-startDevServer().
-  then(runPhantomJs).
-  then(prepareResults);
+if(branchName !== 'master' && !branchName.startWith('test--')) {
+  startDevServer().
+    then(runPhantomJs).
+    then(prepareResults);
+}
