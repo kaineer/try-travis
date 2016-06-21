@@ -34,6 +34,10 @@ module.exports = {
       height: 800
     },
 
+    //
+    stubServer: '127.0.0.1:8081',
+    stubDataDir: 'tests/lib/phantomjs/data/',
+
     // Turn on if you need some debugging from phantomjs
     debug: true,
 
