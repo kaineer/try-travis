@@ -29,9 +29,23 @@ server.listen(config.stubServer, function(request, response) {
 });
 
 /// PAGE
-page.onResourceRequested = function(requestData, networkRequest) {
-  if(requestData.url.indexOf(config.jsonpUrl) > -1) {
-    networkRequest.changeUrl('http://' + config.stubServer + jsonpStub);
-    // TODO: continue
+page.onInitialized = function() {
+  if(page.injectJs(config.shims) ) {
+    log('PhantomJS: loaded shims');
+  } else {
+    log('PhantomJS: could not load shims.js');
   }
 };
+
+page.onResourceRequested = function(requestData, networkRequest) {
+  log('ResourceRequested: ' + requestData.url);
+  if(requestData.url.indexOf(config.jsonpUrl) > -1) {
+    networkRequest.changeUrl('http://' + config.stubServer + jsonpStub);
+  }
+};
+
+page.open(config.url, function(status) {
+  if(status === 'success') {
+    page.render('tests/screenshots/current/step-01.png');
+  }
+});
