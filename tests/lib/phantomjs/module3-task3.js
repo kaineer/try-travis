@@ -104,6 +104,11 @@ var afterReload = function() {
   scrollToBottom();
   showReviewForm();
 
+  page.clipRect = {
+    left: 225, top: 80,
+    width: 565, height: 625
+  };
+
   page.render('tests/screenshots/current/step-01.png');
 };
 
