@@ -39,7 +39,8 @@ module.exports = {
 
     tasks: {
       'module1-task2': require('./tasks/module1-task2'),
-      'module3-task2': require('./tasks/module3-task2')
+      'module3-task2': require('./tasks/module3-task2'),
+      'module3-task3': require('./tasks/module3-task3')
     }
   }
 };
