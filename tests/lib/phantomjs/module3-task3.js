@@ -13,6 +13,7 @@ var log = function(message) {
 };
 
 var page = require('webpage').create();
+var fs = require('fs');
 
 log('Just created page object');
 
@@ -100,11 +101,62 @@ page.onResourceRequested = function(requestData, networkRequest) {
   }
 };
 
+var findCookie = function(name) {
+  for(var i in page.cookies) {
+    if(page.cookies[i].name === name) {
+      return page.cookies[i];
+    }
+  }
+
+  return undefined;
+};
+
+var cookieHasValue = function(name, value) {
+  var cookie = findCookie(name);
+  var cookieValue;
+
+  if(typeof(decodeURIComponent) !== 'function') {
+    console.log('You cannot use decodeURIComponent');
+  }
+
+  if(cookie) {
+    cookieValue = cookie.value;
+
+    if(cookieValue.indexOf('%') === 0){
+      log(cookieValue);
+      cookieValue = decodeURIComponent(cookieValue);
+      log(cookieValue);
+    }
+
+    return (value === cookieValue);
+  }
+
+  return false;
+};
+
 var afterReload = function() {
   scrollToBottom();
   showReviewForm();
 
   page.render('tests/screenshots/current/step-01.png');
+
+  var results = [];
+
+  var nameCookie = findCookie('review-name');
+
+  log(nameCookie.value);
+
+  results.push({
+    title: 'Кука "review-name" должна иметь значение "' + reviewName + '"',
+    result: cookieHasValue('review-name', reviewName)
+  });
+
+  results.push({
+    title: 'Кука "review-mark" должна иметь значение "4"',
+    result: cookieHasValue('review-mark', '4')
+  });
+
+  fs.write(config.results, JSON.stringify({results: results}));
 };
 
 page.onLoadFinished = function(status) {

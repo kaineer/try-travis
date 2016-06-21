@@ -5,5 +5,6 @@ module.exports = {
       requirements: 'на скриншоте выбрана оценка 4 и в поле "имя" указано "Кекс"'
     }
   },
+  useResults: true,
   useScreenshots: true
 };

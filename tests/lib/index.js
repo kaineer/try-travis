@@ -100,14 +100,13 @@ var runPhantomJs = function() {
 };
 
 var prepareJsonResults = function() {
+  logger.debug('Running prepareJsonResults()');
+
   var resultsPath = config.phantomjs.results;
   var buffer = fs.readFileSync(resultsPath);
   var text = buffer.toString();
   var data = JSON.parse(text);
-
   var success = true;
-
-  logger.info('----------- Test results --------------');
 
   data.results.forEach(function(result) {
     if(result.result) {
@@ -160,8 +159,6 @@ var displayScreenshotResults = function(result) {
 
   var success = true;
 
-  logger.info('----------- Test results --------------');
-
   for(var key in messages) {
     if(result[key] >= treshold) {
       logger.info(OK + messages[key].title);
@@ -201,6 +198,10 @@ var prepareScreenshotResults = function() {
 };
 
 var prepareResults = function() {
+  if(branchConfig.useScreenshots || branchConfig.useResults) {
+    logger.info('----------- Test results --------------');
+  }
+
   if(branchConfig.useScreenshots) {
     prepareScreenshotResults();
   }
@@ -217,4 +218,5 @@ if(branchName !== 'master' && !branchName.startsWith('test--')) {
   startDevServer().
     then(runPhantomJs).
     then(prepareResults);
+  // prepareResults();
 }
