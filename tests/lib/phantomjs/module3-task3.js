@@ -115,18 +115,8 @@ var cookieHasValue = function(name, value) {
   var cookie = findCookie(name);
   var cookieValue;
 
-  if(typeof(decodeURIComponent) !== 'function') {
-    console.log('You cannot use decodeURIComponent');
-  }
-
   if(cookie) {
-    cookieValue = cookie.value;
-
-    if(cookieValue.indexOf('%') === 0){
-      log(cookieValue);
-      cookieValue = decodeURIComponent(cookieValue);
-      log(cookieValue);
-    }
+    cookieValue = decodeURIComponent(cookie.value);
 
     return (value === cookieValue);
   }
