@@ -46,6 +46,30 @@ cp.run = function(callback) {
     log('PhantomJS: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
   };
 
+  page.onLoadStarted = function() {
+    log('PhantomJS: load started');
+  };
+
+  page.onNavigationRequested = function(url, type, willNavigate, main) {
+    log('  Navigate to: ' + url);
+    log('         type: ' + type);
+    log('will navigate: ' + willNavigate);
+  };
+
+  page.onResourceRequested = function(requestData, networkRequest) {
+    log('Requested url: ' + requestData.url);
+    log('       method: ' + requestData.method);
+
+    if(requestData.method === 'POST') {
+      networkRequest.abort();
+      page.reload();
+    }
+  };
+
+  page.onLoadFinished = function(status) {
+    log('PhantomJS: load finished: ' + status);
+  };
+
   page.onInitialized = function() {
     if(page.injectJs(config.shims) ) {
       log('PhantomJS: loaded shims');
@@ -81,13 +105,11 @@ cp.runSteps = function() {
     if(html) {
       log('Step: ' + (i+1) + ', evaluate in DOM');
       this.mergeResult(this.page.evaluate(html));
-      log('Step: ' + (i+1) + ', evaluate in DOM, done');
     }
 
     if(page) {
       log('Step: ' + (i+1) + ', work from phantom api');
       page(this.page, this.data);
-      log('Step: ' + (i+1) + ', work from phantom api, done');
     }
 
     if(opts.render) {
