@@ -1,16 +1,10 @@
 //
 var branchName = 'module3-task3';
 var config = require('../config/index.js').phantomjs;
-var debug = config.debug;
+var log = require('./utils/log.js');
 
 var reviewName = 'Кекс';
 var reviewText = 'Пендальф, ты стал белым теперь!';
-
-var log = function(message) {
-  if(debug) {
-    console.log(message.replace(/\s+$/, ''));
-  }
-};
 
 var page = require('webpage').create();
 var fs = require('fs');

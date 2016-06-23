@@ -2,13 +2,7 @@
 //
 
 var config = require('../config/index.js').phantomjs;
-var debug = config.debug;
-
-var log = function(message) {
-  if(debug) {
-    console.log(message.replace(/\s+$/, ''));
-  }
-};
+var log = require('./utils/log.js');
 
 var branchName = 'module1-task2';
 var taskConfig = config.tasks[branchName];

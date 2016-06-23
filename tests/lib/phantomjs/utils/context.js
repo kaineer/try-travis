@@ -3,14 +3,7 @@
 
 var config = require('../../config/index.js').phantomjs;
 var fs = require('fs');
-
-var debug = config.debug;
-
-var log = function(message) {
-  if(debug) {
-    console.log(message.replace(/\s+$/, ''));
-  }
-};
+var log = require('./log.js');
 
 var defaultStepOpts = config.defaultStepOpts;
 
