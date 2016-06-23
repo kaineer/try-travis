@@ -39,12 +39,13 @@ module.exports = {
     stubDataDir: 'tests/lib/phantomjs/data/',
 
     // Turn on if you need some debugging from phantomjs
-    debug: true,
+    debug: false,
 
     tasks: {
       'module1-task2': require('./tasks/module1-task2'),
       'module3-task2': require('./tasks/module3-task2'),
-      'module3-task3': require('./tasks/module3-task3')
+      'module3-task3': require('./tasks/module3-task3'),
+      'module4-task1': require('./tasks/module4-task1')
     }
   }
 };

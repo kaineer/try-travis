@@ -18,6 +18,8 @@ var jsonpStub = '/reviews.js';
 
 /// SERVER
 server.listen(config.stubServer, function(request, response) {
+  log('SERVER: ' + request.url);
+
   if(request.url.indexOf(jsonpStub) > -1) {
     var content = fs.read(config.stubDataDir + '/jsonp.js');
 
@@ -37,15 +39,34 @@ page.onInitialized = function() {
   }
 };
 
+page.onConsoleMessage = function(message) {
+  log('console.log: ' + message);
+};
+
 page.onResourceRequested = function(requestData, networkRequest) {
   log('ResourceRequested: ' + requestData.url);
-  if(requestData.url.indexOf(config.jsonpUrl) > -1) {
+
+  if(requestData.url.indexOf(jsonpUrl) > -1) {
+    log('Redirecting..');
     networkRequest.changeUrl('http://' + config.stubServer + jsonpStub);
   }
 };
 
 page.open(config.url, function(status) {
   if(status === 'success') {
+
+    page.scrollPosition = {
+      top: 1590,
+      left: 0
+    };
+
+    page.clipRect = {
+      top: 6, left: 138,
+      width: 768, height: 1232
+    };
+
     page.render('tests/screenshots/current/step-01.png');
+
+    phantom.exit(0);
   }
 });
