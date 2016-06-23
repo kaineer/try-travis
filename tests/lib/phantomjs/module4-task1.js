@@ -52,21 +52,26 @@ page.onResourceRequested = function(requestData, networkRequest) {
   }
 };
 
-page.open(config.url, function(status) {
-  if(status === 'success') {
+var renderPage = function() {
+  page.scrollPosition = {
+    top: 1590,
+    left: 0
+  };
 
-    page.scrollPosition = {
-      top: 1590,
-      left: 0
-    };
+  page.clipRect = {
+    top: 6, left: 138,
+    width: 768, height: 1232
+  };
 
-    page.clipRect = {
-      top: 6, left: 138,
-      width: 768, height: 1232
-    };
+  page.render('tests/screenshots/current/step-01.png');
+};
 
-    page.render('tests/screenshots/current/step-01.png');
-
+page.onResourceError = function(resourceError) {
+  if(resourceError.url.indexOf('xx') > -1) {
+    renderPage();
     phantom.exit(0);
   }
+};
+
+page.open(config.url, function(status) {
 });
