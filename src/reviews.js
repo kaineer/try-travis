@@ -31,7 +31,7 @@ window.reviews.forEach(function(review) {
   text.textContent = review.description;
 
   if(review.rating > 1 && review.rating < 6) {
-    rate.classList.add('review-rating-' + rates[review.rating]);
+    rate.classList.add('review-rating-' + rates[review.rating - 2]);
   }
 
   console.log('Append template');

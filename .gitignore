@@ -38,4 +38,5 @@ jspm_packages
 
 # Tests directory
 tests/results.json
+tests/index.html
 tests/screenshots/current/*.png
