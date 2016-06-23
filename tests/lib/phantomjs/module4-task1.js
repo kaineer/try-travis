@@ -63,14 +63,30 @@ var renderPage = function() {
     width: 768, height: 1232
   };
 
+  var style = page.evaluate(function() {
+    var wrongImg =
+        document.querySelector('.review-load-failure .review-author');
+    return getComputedStyle(wrongImg, ':after');
+  });
+
+  log(style.visibility);
+
+  log('Rendering step');
   page.render('tests/screenshots/current/step-01.png');
 };
 
+page.onLoadFinished = function() {
+  renderPage();
+  phantom.exit(0);
+};
+
 page.onResourceError = function(resourceError) {
-  if(resourceError.url.indexOf('xx') > -1) {
-    renderPage();
-    phantom.exit(0);
-  }
+  log(resourceError.url);
+  // if(resourceError.url.indexOf('xx') > -1) {
+  //   log(resourceError.url);
+  //   renderPage();
+  //   phantom.exit(0);
+  // }
 };
 
 page.open(config.url, function(status) {
