@@ -43,6 +43,20 @@ page.onConsoleMessage = function(message) {
   log('console.log: ' + message);
 };
 
+page.onError = function(msg, trace) {
+
+  var msgStack = ['ERROR: ' + msg];
+
+  if (trace && trace.length) {
+    msgStack.push('TRACE:');
+    trace.forEach(function(t) {
+      msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function +'")' : ''));
+    });
+  }
+
+  console.error(msgStack.join('\n'));
+};
+
 page.onResourceRequested = function(requestData, networkRequest) {
   log('ResourceRequested: ' + requestData.url);
 
@@ -52,21 +66,74 @@ page.onResourceRequested = function(requestData, networkRequest) {
   }
 };
 
+var renderPage = function() {
+  page.scrollPosition = {
+    top: 1590,
+    left: 0
+  };
+
+  page.clipRect = {
+    top: 6, left: 138,
+    width: 768, height: 1232
+  };
+
+  page.render('tests/screenshots/current/step-01.png');
+};
+
+// var saveResults = function() {
+//   log(0);
+
+//   // var reviewHasError = page.evaluate(function() {
+//   //   var review = document.querySelector('.review')[3];
+//   //   return review.classList.contains('review-load-failure');
+//   // });
+
+//   // console.log(1);
+
+//   // var results = [
+//   //   { title: 'Четвёртый отзыв не может загрузить аватар',
+//   //     result: reviewHasError
+//   //   }
+//   // ];
+
+
+//   // console.log(2);
+
+
+//   // fs.write(config.report, JSON.stringify(results));
+
+//   // console.log(3);
+// };
+
+var saveResults = function() {
+  var reviewHasError = page.evaluate(function() {
+    var review = document.querySelectorAll('.review')[3];
+    return review.classList.contains('review-load-failure');
+  });
+
+  var results = [
+    { title: 'Четвёртый отзыв не может загрузить аватар',
+      result: reviewHasError
+    }
+  ];
+
+  fs.write(config.results, JSON.stringify({results: results}), 'w');
+};
+
+page.onResourceReceived = function(response) {
+  log('Received: ' + response.url);
+};
+
 page.open(config.url, function(status) {
   if(status === 'success') {
-
-    page.scrollPosition = {
-      top: 1590,
-      left: 0
-    };
-
-    page.clipRect = {
-      top: 6, left: 138,
-      width: 768, height: 1232
-    };
-
-    page.render('tests/screenshots/current/step-01.png');
-
-    phantom.exit(0);
+    log('Render page');
+    renderPage();
+    saveResults();
   }
+
+  phantom.exit(0);
 });
+
+setTimeout(function() {
+  phantom.exit(1);
+}, 2000);

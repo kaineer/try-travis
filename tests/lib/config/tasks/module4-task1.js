@@ -5,5 +5,6 @@ module.exports = {
       requirements: 'Отзывы должны быть загружены'
     }
   },
-  useScreenshots: true
+  useScreenshots: true,
+  useResults: true
 };
