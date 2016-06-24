@@ -22,8 +22,12 @@ window.reviews.forEach(function(review) {
   var rates = ['two', 'three', 'four', 'five'];
 
   image.onerror = function() {
-    console.log('adding class review-load-failure');
     tempTemplate.classList.add('review-load-failure');
+  };
+
+  image.onload = function() {
+    image.width = 124;
+    image.height = 124;
   };
 
   image.src = review.author.picture;

@@ -43,6 +43,20 @@ page.onConsoleMessage = function(message) {
   log('console.log: ' + message);
 };
 
+page.onError = function(msg, trace) {
+
+  var msgStack = ['ERROR: ' + msg];
+
+  if (trace && trace.length) {
+    msgStack.push('TRACE:');
+    trace.forEach(function(t) {
+      msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function +'")' : ''));
+    });
+  }
+
+  console.error(msgStack.join('\n'));
+};
+
 page.onResourceRequested = function(requestData, networkRequest) {
   log('ResourceRequested: ' + requestData.url);
 
@@ -63,31 +77,63 @@ var renderPage = function() {
     width: 768, height: 1232
   };
 
-  var style = page.evaluate(function() {
-    var wrongImg =
-        document.querySelector('.review-load-failure .review-author');
-    return getComputedStyle(wrongImg, ':after');
-  });
-
-  log(style.visibility);
-
-  log('Rendering step');
   page.render('tests/screenshots/current/step-01.png');
 };
 
-page.onLoadFinished = function() {
-  renderPage();
-  phantom.exit(0);
+// var saveResults = function() {
+//   log(0);
+
+//   // var reviewHasError = page.evaluate(function() {
+//   //   var review = document.querySelector('.review')[3];
+//   //   return review.classList.contains('review-load-failure');
+//   // });
+
+//   // console.log(1);
+
+//   // var results = [
+//   //   { title: 'Четвёртый отзыв не может загрузить аватар',
+//   //     result: reviewHasError
+//   //   }
+//   // ];
+
+
+//   // console.log(2);
+
+
+//   // fs.write(config.report, JSON.stringify(results));
+
+//   // console.log(3);
+// };
+
+var saveResults = function() {
+  var reviewHasError = page.evaluate(function() {
+    var review = document.querySelectorAll('.review')[3];
+    return review.classList.contains('review-load-failure');
+  });
+
+  var results = [
+    { title: 'Четвёртый отзыв не может загрузить аватар',
+      result: reviewHasError
+    }
+  ];
+
+  fs.write(config.results, JSON.stringify({results: results}), 'w');
 };
 
-page.onResourceError = function(resourceError) {
-  log(resourceError.url);
-  // if(resourceError.url.indexOf('xx') > -1) {
-  //   log(resourceError.url);
-  //   renderPage();
-  //   phantom.exit(0);
-  // }
+page.onResourceReceived = function(response) {
+  log('Received: ' + response.url);
 };
 
 page.open(config.url, function(status) {
+  if(status === 'success') {
+    log('Render page');
+    renderPage();
+    saveResults();
+  }
+
+  phantom.exit(0);
 });
+
+setTimeout(function() {
+  phantom.exit(1);
+}, 2000);
