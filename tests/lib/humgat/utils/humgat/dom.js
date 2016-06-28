@@ -16,7 +16,7 @@ dp.assertEqual = function(expected, actual, message) {
   var humgat = this.humgat;
   var debug = humgat.debug;
   var page = humgat.getPage();
-  var result;
+  var result, compareResult;
 
   debug('assertEqual: ' + message);
 
@@ -24,18 +24,20 @@ dp.assertEqual = function(expected, actual, message) {
     actual = page.evaluate(actual);
   }
 
+  compareResult = humgat.compare(expected, actual);
+
   result = {
     type: 'equal',
     title: message,
     expected: expected,
     actual: actual,
-    result: (expected === actual)
+    result: compareResult
   };
 
   humgat.addResult(result);
 
   return new Promise(function(resolve, reject) {
-    if(expected === actual) {
+    if(compareResult) {
       humgat.emit('assertion.ok', result);
       resolve(result);
     } else {

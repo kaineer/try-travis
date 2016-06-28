@@ -24,10 +24,14 @@ var getReviews = function(callback) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       if (xhr.status !== 200) {
-        reviewsContainer.classList.add('reviews-load-failure');
+        reviews.classList.add('reviews-load-failure');
+        console.log('Could not get reviews: ' + JSON.stringify(xhr));
+        console.log(xhr.responseText);
       } else {
         reviews.classList.remove('reviews-list-loading');
         reviews.classList.remove('reviews-load-failure');
+
+        console.log('Got reviews');
 
         var loadedJSON = JSON.parse(xhr.responseText);
         callback(loadedJSON);

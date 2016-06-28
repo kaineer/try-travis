@@ -15,6 +15,8 @@ var filterReviews = function(evt) {
 };
 
 var displayReviews = function(data) {
+  console.log('Reviews count: ' + data.length);
+
   reviews = data;
 
   form.addEventListener('click', filterReviews);

@@ -80,7 +80,7 @@ var redirects = function() {
     server.listen(config.stubServer, function(request, response) {
       var redirect, path, mime, content;
 
-      humgat.emit('resource.server.requested', request.url);
+      humgat.emit('resource.server.requested', request);
 
       for(var i = 0; i < args.length; ++i) {
         if(checkRedirect(request, args[i])) {
@@ -97,10 +97,11 @@ var redirects = function() {
           mime = getMimeType(redirect);
           content = fs.read(path);
 
-          humgat.emit('resource.server.read', path, content);
+          humgat.emit('resource.server.read', path, content.length + ' byte(s)');
 
           response.status = redirect.status || 200;
           response.setHeader('Content-Type', mime);
+          response.setHeader('Access-Control-Allow-Origin', '*');
           response.write(content);
           response.close();
         } else {

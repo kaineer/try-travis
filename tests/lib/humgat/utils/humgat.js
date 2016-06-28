@@ -197,13 +197,41 @@ hp.viewport = function(w, h) {
   }
 };
 
+hp.compare = function(expected, actual) {
+  if(typeof(expected) !== typeof(actual)) {
+    return false;
+  }
+
+  if(typeof(expected) === 'string' ||
+     typeof(expected) === 'number' ||
+     typeof(expected) === 'undefined') {
+    return expected === actual;
+  }
+
+  if(typeof(expected) === 'object' && expected && actual) {
+    for(var key in expected) {
+      if(expected[key] !== actual[key]) {
+        this.debug('Compare at key: ' + key);
+        this.debug('      expected: ' + expected[key]);
+        this.debug('        actual: ' + actual[key]);
+
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
 hp.assertEqual = function(expected, actual, message) {
   this.addResult({
     type: 'equal',
     expected: expected,
     actual: actual,
     title: message,
-    result: (expected === actual)
+    result: this.compare(expected, actual)
   });
 };
 

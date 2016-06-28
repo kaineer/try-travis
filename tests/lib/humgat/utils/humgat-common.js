@@ -17,6 +17,8 @@ var humgatCommon = function(humgat) {
 
     humgat.onEmit = function(name, args) {
       if(name.indexOf('console') > -1 ||
+         name.indexOf('server.read') > -1 ||
+         // name.indexOf('received') > -1 ||
          name.indexOf('page.') === 0
         ) {
         logger.debug('Emit `' + name + '`, ' + JSON.stringify(args));

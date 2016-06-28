@@ -45,8 +45,8 @@ module.exports = {
       'module1-task2': require('./tasks/module1-task2'),
       'module3-task2': require('./tasks/module3-task2'),
       'module3-task3': require('./tasks/module3-task3'),
-      'module4-task1': require('./tasks/module4-task1')
-      // 'module5-task1': require('./tasks/module5-task1')
+      'module4-task1': require('./tasks/module4-task1'),
+      'module5-task1': require('./tasks/module5-task1')
     }
   }
 };

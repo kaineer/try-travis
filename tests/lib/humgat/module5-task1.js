@@ -18,28 +18,38 @@ var selector = {
 humgat.redirects({
   urlPattern: '//o0.github.io/assets/json/reviews.json',
   file: 'reviews.json'
-}).on('page.open.success', function() {
-  var branchConfig = this.config[branchName];
-  var contents = branchConfig.contents;
+}).on('resource.redirect', function() {
+  this.on('page.loaded', function() {
+    this.off('page.loaded');
 
-  this.emit('filter.reviews.check', selector.filterAll,  contents.all, 'Все');
-  this.emit('filter.reviews.check', selector.filterGood, contents.good, 'Хорошие');
-  this.emit('filter.reviews.check', selector.filterBad,  contents.bad, 'Плохие');
-  this.emit('filter.reviews.check', selector.filterPopular, contents.popular, 'Популярные');
+    var branchConfig = this.config.tasks[branchName];
+    var contents = branchConfig.contents;
 
-  this.emit('suite.done');
+    this.emit('filter.reviews.check', selector.filterAll,     contents.all, 'Все');
+    this.emit('filter.reviews.check', selector.filterGood,    contents.good, 'Хорошие');
+    this.emit('filter.reviews.check', selector.filterBad,     contents.bad, 'Плохие');
+    this.emit('filter.reviews.check', selector.filterPopular, contents.popular, 'Популярные');
+
+    // this.emit('suite.done');
+  });
 }).on('filter.reviews.check', function(selector, contents, filterName) {
   var domContents;
 
   this.dom.click(selector);
-  domContents = this.page.evaluate();
 
   this.dom.assertEqual(
     contents,
     function() {
-      var elements =
-          document.querySelectorAll('.reviews-list .review-text');
-      return elements.map(function(el) { return el.textContent; });
+      var elements = document.querySelectorAll('.reviews-list .review-text');
+      var content = [];
+
+      if(elements) {
+        for(var i = 0; i < elements.length; ++i) {
+          content.push(elements[i].textContent);
+        }
+      }
+
+      return content;
     },
     'Сравнение по фильтру ' + filterName);
 }).run();

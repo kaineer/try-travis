@@ -4,6 +4,46 @@ var renderReviews = require('./render-reviews');
 
 var DAY = 1000 * 60 * 60 * 24;
 
+var compareDate = function(a, b) {
+  if(a.date < b.date) {
+    return -1;
+  } else if(a.date > b.date) {
+    return 1;
+  }
+
+  return 0;
+};
+
+var compareGood = function(a, b) {
+  var diff = b.rating - a.rating;
+
+  if(diff === 0) {
+    return compareDate(a, b);
+  } else {
+    return diff;
+  }
+};
+
+var compareBad = function(a, b) {
+  var diff = a.rating - b.rating;
+
+  if(diff === 0) {
+    return compareDate(a, b);
+  } else {
+    return diff;
+  }
+};
+
+var comparePopular = function(a, b) {
+  var diff = b.review_usefulness - a.review_usefulness;
+
+  if(diff === 0) {
+    return compareDate(a, b);
+  } else {
+    return diff;
+  }
+};
+
 var filterAll = function(reviews) {
   return reviews;
 };
@@ -15,9 +55,7 @@ var filterRecent = function(reviews) {
     return (now - Date.parse(review.date)) / DAY < 4;
   });
 
-  reviews.sort(function(a, b) {
-    return Date.parse(a) - Date.parse(b);
-  });
+  reviews.sort(compareDate(b, a));
 
   return reviews;
 };
@@ -27,9 +65,7 @@ var filterGood = function(reviews) {
     return review.rating >= 3;
   });
 
-  reviews.sort(function(a, b) {
-    return b.rating - a.rating;
-  });
+  reviews.sort(compareGood);
 
   return reviews;
 };
@@ -39,17 +75,13 @@ var filterBad = function(reviews) {
     return review.rating < 3;
   });
 
-  reviews.sort(function(a, b) {
-    return a.rating - b.rating;
-  });
+  reviews.sort(compareBad);
 
   return reviews;
 };
 
 var filterPopular = function(reviews) {
-  reviews.sort(function(a, b) {
-    return b.review_usefulness - a.review_usefulness;
-  });
+  reviews.sort(comparePopular);
 
   return reviews;
 };
