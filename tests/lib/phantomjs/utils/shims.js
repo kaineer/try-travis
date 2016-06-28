@@ -6,8 +6,6 @@
  * MIT license, see license.md for detail.
  */
 
-console.log('loading shim');
-
 (function() {
   if (Function.prototype.bind) {
     return;
@@ -213,6 +211,7 @@ if (typeof Object.assign != 'function') {
           }
         }
       }
+
       return output;
     };
   })();
