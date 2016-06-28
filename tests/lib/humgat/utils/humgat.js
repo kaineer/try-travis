@@ -219,6 +219,16 @@ hp.compare = function(expected, actual) {
       }
     }
 
+    for(var key in actual) {
+      if(expected[key] !== actual[key]) {
+        this.debug('Compare at key: ' + key);
+        this.debug('      expected: ' + expected[key]);
+        this.debug('        actual: ' + actual[key]);
+
+        return false;
+      }
+    }
+
     return true;
   }
 

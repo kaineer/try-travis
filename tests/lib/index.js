@@ -50,6 +50,17 @@ var startDevServer = function() {
       }
     });
 
+    npmStart.stderr.on('data', function(data) {
+      var text = data.toString();
+
+      if(text.indexOf('EADDRINUSE') > -1) {
+        logger.error('Address in use');
+        reject({
+          message: 'Address in use'
+        });
+      }
+    });
+
     npmStart.on('error', function(err) {
       reject(err);
     });
@@ -63,7 +74,7 @@ var startDevServer = function() {
 var runPhantomJs = function() {
   var runPJ = function(resolve, reject) {
     var phantomJs = spawn('phantomjs', [
-      path.join(__dirname, 'phantomjs', branchName + '.js')
+      path.join(__dirname, 'humgat', branchName + '.js')
     ]);
 
     phantomJs.stdout.on('data', function(data) {
@@ -125,20 +136,31 @@ var prepareJsonResults = function() {
 var COMPARE_RE = /\d+(\.\d+)?\s+\((\d+(\.\d+)?(e[-+]\d+)?)\)/i;
 
 var compareTwoScreenshots = function(result, etalonStep, targetStep) {
-  var stepBase = path.basename(etalonStep, '.png');
+  var treshold = config.treshold;
+
+  logger.debug('Compare ' + etalonStep + ' with ' + targetStep);
 
   var text =
       execSync(
         'compare -metric RMSE ' +
           etalonStep + ' ' + targetStep + ' /dev/null 2>&1').toString();
 
+  logger.debug(text);
+
   var md = COMPARE_RE.exec(text);
   var percent;
 
   if(md) {
     percent = parseFloat(md[2]);
-    result[stepBase] = 100 - percent;
-    logger.debug(stepBase + ' got ' + result[stepBase] + ' percents');
+
+    result.percent = 100 - percent;
+    result.result = (result.percent >= treshold);
+
+    result.expected = etalonStep;
+
+    logger.debug(result.step + ' got ' + result.percent + ' percents');
+  } else {
+    logger.debug('Could not match regexp');
   }
 };
 
@@ -197,20 +219,56 @@ var prepareScreenshotResults = function() {
   displayScreenshotResults(result);
 };
 
+var logEqualResult = function(result) {
+  if(result.result) {
+    logger.info(OK + result.title);
+  } else {
+    logger.error(FAIL + result.title);
+  }
+};
+
+var logScreenshotResult = function(result) {
+  var stepId = result.step;
+  var etalonStep = path.join(config.screenshots, branchName, stepId + '.png');
+  var targetStep = path.join(config.screenshots, 'current', stepId + '.png');
+  var messages = branchConfig.messages;
+  var step = messages[result.step];
+
+  compareTwoScreenshots(result, etalonStep, targetStep);
+
+  if(result.result) {
+    logger.info(OK + step.title);
+  } else {
+    logger.error(FAIL + step.title);
+  }
+};
+
 var prepareResults = function() {
-  if(branchConfig.useScreenshots || branchConfig.useResults) {
+  var resultsPath = config.phantomjs.results;
+  var buffer = fs.readFileSync(resultsPath);
+  var text = buffer.toString();
+  var data = JSON.parse(text);
+  var success = true;
+
+  if(data.length) {
     logger.info('----------- Test results --------------');
   }
 
-  if(branchConfig.useScreenshots) {
-    prepareScreenshotResults();
-  }
+  data.forEach(function(result) {
+    switch(result.type) {
+    case 'equal':
+      logEqualResult(result);
+      break;
 
-  if(branchConfig.useResults) {
-    prepareJsonResults();
-  }
+    case 'screenshot':
+      logScreenshotResult(result);
+      break;
+    }
 
-  process.exit(0);
+    success = success && result.result;
+  });
+
+  process.exit(success ? 0 : 1);
 };
 
 

@@ -25,12 +25,14 @@ humgat.redirects({
     var branchConfig = this.config.tasks[branchName];
     var contents = branchConfig.contents;
 
+    this.setScrollPosition(0, 1590);
+
     this.emit('filter.reviews.check', selector.filterAll,     contents.all, 'Все');
     this.emit('filter.reviews.check', selector.filterGood,    contents.good, 'Хорошие');
     this.emit('filter.reviews.check', selector.filterBad,     contents.bad, 'Плохие');
     this.emit('filter.reviews.check', selector.filterPopular, contents.popular, 'Популярные');
 
-    // this.emit('suite.done');
+    this.emit('suite.done');
   });
 }).on('filter.reviews.check', function(selector, contents, filterName) {
   var domContents;
@@ -51,5 +53,5 @@ humgat.redirects({
 
       return content;
     },
-    'Сравнение по фильтру ' + filterName);
+    'Сравнение по фильтру `' + filterName + '`');
 }).run();

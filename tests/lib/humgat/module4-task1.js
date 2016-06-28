@@ -16,5 +16,7 @@ humgat.redirects({
 
   this.renderStep();
 
+  this.emit('suite.done');
+
   this.exit(0);
 }).run();
