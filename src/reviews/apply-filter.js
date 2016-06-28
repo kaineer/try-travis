@@ -55,7 +55,7 @@ var filterRecent = function(reviews) {
     return (now - Date.parse(review.date)) / DAY < 4;
   });
 
-  reviews.sort(compareDate(b, a));
+  reviews.sort(compareDate);
 
   return reviews;
 };
@@ -87,18 +87,18 @@ var filterPopular = function(reviews) {
 };
 
 var FILTERS = {
-  'reviews-all':     filterAll,
-  'reviews-recent':  filterRecent,
-  'reviews-good':    filterGood,
-  'reviews-bad':     filterBad,
+  'reviews-all': filterAll,
+  'reviews-recent': filterRecent,
+  'reviews-good': filterGood,
+  'reviews-bad': filterBad,
   'reviews-popular': filterPopular
 };
 
 var applyFilter = function(filterId, reviews) {
   var fnFilter = FILTERS[filterId];
-  var reviews = fnFilter(reviews);
+  var filteredReviews = fnFilter(reviews);
 
-  renderReviews(reviews);
+  renderReviews(filteredReviews);
 };
 
 module.exports = applyFilter;

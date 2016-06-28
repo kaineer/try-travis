@@ -8,7 +8,7 @@ var rbGroup = form.elements.reviews;
 
 var applyFilter = require('./apply-filter');
 
-var filterReviews = function(evt) {
+var filterReviews = function() {
   console.log('Filter: ' + rbGroup.value);
   applyFilter(rbGroup.value, slice.call(reviews));
   console.log('Filter done');
